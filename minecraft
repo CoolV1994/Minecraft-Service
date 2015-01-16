@@ -45,7 +45,7 @@ as_user() {
 }
 
 mc_start() {
-	if pgrep -u $USERNAME -f $SERVICE > /dev/null > /dev/null
+	if pgrep -u $USERNAME -f $SERVICE > /dev/null
 	then
 		echo "$SERVICE is already running."
 	else
@@ -54,7 +54,7 @@ mc_start() {
 		as_user "cd $MCPATH && screen -dmS minecraft $INVOCATION"
 		# Wait 5 seconds to start up
 		sleep 5
-		if pgrep -u $USERNAME -f $SERVICE > /dev/null > /dev/null
+		if pgrep -u $USERNAME -f $SERVICE > /dev/null
 		then
 			# Print output
 			tail -n $[`wc -l "$MCPATH/logs/latest.log" | awk '{print $1}'`] "$MCPATH/logs/latest.log"
@@ -101,7 +101,7 @@ mc_command() {
 }
 
 mc_saveall() {
-	if pgrep -u $USERNAME -f $SERVICE > /dev/null > /dev/null
+	if pgrep -u $USERNAME -f $SERVICE > /dev/null
 	then
 		echo "$SERVICE is running. Saving the world..."
 		as_user "screen -p 0 -S minecraft -X eval 'stuff \"save-all\"\015'"
@@ -154,7 +154,7 @@ case "$1" in
 		mc_start
 	;;
 	spigot-restart)
-		# Wait 30 seconds for the server to fully stop the start again
+		# Wait 30 seconds for the server to fully stop then start again
 		sleep 30
 		mc_start
 	;;
@@ -168,7 +168,7 @@ case "$1" in
 		mc_command "save-on"
 	;;
 	status)
-		if ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE > /dev/null
+		if pgrep -u $USERNAME -f $SERVICE > /dev/null
 		then
 			echo "$SERVICE is running."
 		else
