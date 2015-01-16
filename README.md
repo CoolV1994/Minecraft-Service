@@ -23,6 +23,8 @@ If you use Spigot for your Minecraft server, copy file`restart.sh` and place it 
 
 Example: `/home/users/minecraft/Spigot`
 
+Use command `chmod +x restart.sh` to mark the file as executable.
+
 This will allow you to automatically start your server back up after using the `/restart` command in-game.
 
 Note: Remember to edit your `Spigot.yml`...
@@ -39,3 +41,8 @@ Use as `minecraft <command>`.
 * save - Save the world (etc..)
 * backup - Create an archive of the server
 * `mc command` - Use a Minecraft command (`ban Player123`, `say Hello`, etc...)
+
+# Requirements
+* Linux machine
+* Screen
+* Java
