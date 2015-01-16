@@ -23,9 +23,9 @@
 # Server Jar File
 SERVICE='Spigot.jar'
 # Linux Username
-USERNAME='gawd'
+USERNAME='minecraft'
 # Server Root Folder
-MCPATH='/home/gawd/spigot'
+MCPATH="/home/${USERNAME}/spigot"
 # RAM to Allocate (1G or 1024M)
 RAM='4G'
 # Server Java Command
@@ -33,7 +33,7 @@ INVOCATION="java -server -Xmx${RAM} -Xms${RAM} -XX:+UseConcMarkSweepGC -XX:+CMSC
 # Minecraft Worlds
 WORLDS=("world" "SkyBlock" "Creative")
 # Backup Folder
-BACKUPPATH='/home/gawd/backups'
+BACKUPPATH="/home/${USERNAME}/backups"
 
 ME=`whoami`
 as_user() {
