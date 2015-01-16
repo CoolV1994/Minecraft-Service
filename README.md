@@ -18,6 +18,12 @@ Any command not handled by this script will be passed on to the minecraft server
 
 Example: The command `minecraft say Hello everybody!` will send a message to everyone online saying "_Hello everybody!_"
 
+## Start on Server Boot
+### Fedora / CentOS
+`chkconfig --add minecraft`
+### Ubuntu / Debian
+`update-rc.d minecraft defaults`
+
 # Spigot
 If you use Spigot for your Minecraft server, copy file`restart.sh` and place it in your server's root folder.
 
