@@ -104,9 +104,13 @@ mc_saveall() {
 	if pgrep -u $USERNAME -f $SERVICE > /dev/null
 	then
 		echo "$SERVICE is running. Saving the world..."
+		# Save the World
 		as_user "screen -p 0 -S minecraft -X eval 'stuff \"save-all\"\015'"
+		# Say World saved.
 		as_user "screen -p 0 -S minecraft -X eval 'stuff \"say World saved.\"\015'"
+		# Save WorldGuard Regions
 		as_user "screen -p 0 -S minecraft -X eval 'stuff \"region save\"\015'"
+		# Save GroupManager Groups
 		as_user "screen -p 0 -S minecraft -X eval 'stuff \"mansave\"\015'"
 		sync
 		# Wait 10 seconds to finish saving
