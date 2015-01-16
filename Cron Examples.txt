@@ -1,7 +1,7 @@
 #
 ### Cron Examples
 #
-Use command `crontab -e` to open an editor with your cron jobs.
+# Use command `crontab -e` to open an editor with your cron jobs.
 
 # Auto save every 30 minutes
 0,30	*	*	*	*	minecraft save
