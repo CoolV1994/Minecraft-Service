@@ -134,7 +134,7 @@ mc_backup() {
 
 	# Backup Server Plugins
 	echo "Backing up server plugins..."
-	as_user "cd $MCPATH && zip -r $BACKUPPATH/Plugins_${NOW}.zip plugins"
+	as_user "cd $MCPATH && zip -r --exclude=plugins/dynmap/web/tiles/* $BACKUPPATH/Plugins_${NOW}.zip plugins"
 	echo "The plugins have been archived."
 
 	# Backup Server Data (Bans, White-list, etc...)
