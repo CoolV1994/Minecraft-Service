@@ -21,7 +21,7 @@
 ### SETTINGS
 #
 # Server Jar File
-SERVICE='Spigot.jar'
+SERVICE='spigot-1.8.jar'
 # Linux Username
 USERNAME='minecraft'
 # Server Root Folder
@@ -29,7 +29,7 @@ MCPATH="/home/${USERNAME}/spigot"
 # RAM to Allocate (1G or 1024M)
 RAM='4G'
 # Server Java Command
-INVOCATION="java -server -Xmx${RAM} -Xms${RAM} -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256M -jar $SERVICE nogui"
+INVOCATION="java -server -Xmx${RAM} -Xms1G -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256M -jar $SERVICE nogui"
 # Minecraft Worlds
 WORLDS=("world" "SkyBlock" "Creative")
 # Backup Folder
