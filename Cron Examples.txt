@@ -3,6 +3,9 @@
 #
 # Use command `crontab -e` to open an editor with your cron jobs.
 
+# Start any crashed servers again each hour
+@hourly				minecraft start
+
 # Auto save every 30 minutes
 0,30	*	*	*	*	minecraft save
 
@@ -17,5 +20,5 @@
 55	23	*	*	*	minecraft stop
 56	23	*	*	*	minecraft backup
 
-# Start any crashed servers again each hour
-@hourly				minecraft start
+# Weekly backup cleanup
+@weekly				sh /home/minecraft/CleanBackups.sh
