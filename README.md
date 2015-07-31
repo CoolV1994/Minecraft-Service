@@ -1,7 +1,28 @@
 # Minecraft Server Script
 Easily control your Minecraft server in Linux
 
-# Installation
+# Installation (1 Server)
+Copy file `server.sh` your server folder. Ex: `/home/minecraft/Survival`
+
+With your shell, use command `chmod +x /home/minecraft/Survival/server.sh` to mark the file as executable.
+
+Then use command `ln -s /home/minecraft/Survival/server.sh /bin/minecraft` to make a shortcut in /bin.
+
+You can now control your Minecraft server by using the simple command `minecraft`.
+
+Then use command `ln -s /home/minecraft/Survival/server.sh /etc/init.d/minecraft` to make a shortcut in `/etc/init.d`.
+
+Your Minecraft network is now a Linux service, you can use this to start your server automatically on reboots, etc...
+
+Example: To start your server, use command `minecraft start`.
+
+Use `minecraft` with no arguments for a list of commands.
+
+Any command not handled by this script will be passed on to the minecraft server.
+
+Example: The command `minecraft say Hello everybody!` will send a message to everyone online saying "_Hello everybody!_"
+
+# Installation (Multiple Servers)
 Copy file `network.sh` to `/home/minecraft` or your user directory.
 
 Copy file `server.sh` to each server folder in the network. Ex: `/home/minecraft/Survival`
