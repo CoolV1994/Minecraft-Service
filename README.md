@@ -23,6 +23,13 @@ Any command not handled by this script will be passed on to the minecraft server
 Example: The command `minecraft say Hello everybody!` will send a message to everyone online saying "_Hello everybody!_"
 
 # Installation (Multiple Servers)
+> ## Recommendations
+> It is recommended that you create a seperate folder to store your Spigot.jar, and plugin jars.
+
+> Then by using shortcuts, create a link for each Jar to its respective folder.
+
+> This will allow you to simplify things such as updating plugins, and will help save HDD space.
+
 Copy file `network.sh` to `/home/minecraft` or your user directory.
 
 Copy file `server.sh` to each server folder in the network. Ex: `/home/minecraft/Survival`
