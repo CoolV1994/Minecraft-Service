@@ -24,7 +24,7 @@ Example: The command `minecraft say Hello everybody!` will send a message to eve
 
 # Installation (Multiple Servers)
 > ## Recommendations
-> It is recommended that you create a seperate folder to store your Spigot.jar, and plugin jars.
+> It is recommended that you create a separate folder to store your Spigot.jar, and plugin jars.
 
 > Then by using shortcuts, create a link for each Jar to its respective folder.
 
