@@ -7,7 +7,7 @@
 @hourly				minecraft @ start
 
 # Auto save every 30 minutes
-0,30	*	*	*	*minecraft @ save
+0,30	*	*	*	*	minecraft @ save
 
 # Every 2 hours broadcast vote message.
 5	*/2	*	*	*	minecraft s @ cmd broadcast Have you voted today? Use /vote.
