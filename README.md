@@ -31,7 +31,7 @@ Example: To start your server/network, use command `minecraft @ start` or `minec
 
 Optional Feature: Any command not handled by this script will be passed on to the minecraft server, or all servers if no server is specified.
 
-Example: The command `minecraft server @ broadcast Hello everybody!` will broadcast a message to everyone on every server saying "_Hello everybody!_"
+Example: The command `minecraft server @ cmd broadcast Hello everybody!` will broadcast a message to everyone on every server saying "_Hello everybody!_"
 
 
 ## Start on Server Boot
