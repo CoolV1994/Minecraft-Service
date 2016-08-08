@@ -64,7 +64,7 @@ Use as `minecraft <group> <server> <command>`.
 * status - Check the server's status (Running or not Running)
 * save - Save the world (etc..)
 * backup - Create an archive of the server
-* cmd <mc command> - Use a Minecraft command (`ban Player123`, `say Hello`, etc...)
+* cmd (mc command) - Use a Minecraft command (`ban Player123`, `say Hello`, etc...)
 
 You can use `@` to command all servers in a group or all groups.
 
