@@ -1,177 +1,181 @@
-#!/bin/bash
+# !/bin/bash
 #
-### SETTINGS
-#
-# Server Name
-SERVERNAME='Survival'
-# Linux Username
-USERNAME='minecraft'
-# Server Root Folder
-MCPATH="/home/$USERNAME/$SERVERNAME"
-# Server Jar File
-SERVERJAR="$MCPATH/$SERVERNAME.jar"
-# Max RAM to Allocate
-RAM='2G'
-# Server Java Command
-INVOCATION="java -server -Xmx${RAM} -Xms1G -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=128M -jar $SERVERJAR"
-# Minecraft Worlds
-WORLDS=("Survival" "Survival_nether" "Survival_the_end")
-# Backup Folder
-BACKUPPATH="/home/$USERNAME/Backups/$SERVERNAME"
-# Vote Message
-VOTECMD="say Have you voted today? Use command /vote"
 
+# Load config
+#SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+SCRIPT_DIR="$(dirname "$0")"
+SERVER_SETTINGS="$SCRIPT_DIR/server.cfg"
+. $SERVER_SETTINGS
+
+# Run as designated user
 ME=`whoami`
 as_user() {
-	if [ $ME == $USERNAME ] ; then
+	if [ $ME == $SERVER_USER ]
+	then
 		bash -c "$1"
 	else
-		su - $USERNAME -c "$1"
+		sudo -u $SERVER_USER bash -c "$1"
 	fi
 }
 
-mc_start() {
-	if pgrep -u $USERNAME -f $SERVERJAR > /dev/null
+# Check if server is running
+is_running() {
+	if pgrep -u $SERVER_USER -f $SERVER_JAR > /dev/null
 	then
-		echo "$SERVERJAR is already running."
+		return 0
 	else
-		echo "Starting $SERVERJAR..."
-		cd $MCPATH
-		as_user "cd $MCPATH && screen -dmS $SERVERNAME $INVOCATION"
-		# Wait 5 seconds to start up
-		sleep 5
-		if pgrep -u $USERNAME -f $SERVERJAR > /dev/null
+		return 1
+	fi
+}
+
+server_start() {
+	if is_running
+	then
+		echo "$SERVER_NAME is already running."
+	else
+		echo "Starting $SERVER_NAME..."
+		PRE_LOG_LENGTH=`wc -l "$LOG_FILE" | awk '{print $1}'`
+		INVOCATION="$SERVER_EXE $SERVER_PARAMS"
+		as_user "cd $SERVER_DIR && screen -dmS $SCREEN_NAME $INVOCATION"
+		sleep $START_TIME
+		if is_running
 		then
-			# Print output
-			tail -n $[`wc -l "$MCPATH/logs/latest.log" | awk '{print $1}'`] "$MCPATH/logs/latest.log"
+			echo "$SERVER_NAME is now running."
 		else
-			echo "Could not start $SERVERJAR."
+			echo "Could not start $SERVER_NAME."
 		fi
-	fi
-}
-
-mc_stop() {
-	if pgrep -u $USERNAME -f $SERVERJAR > /dev/null
-	then
-		pre_log_len=`wc -l "$MCPATH/logs/latest.log" | awk '{print $1}'`
-		echo "$SERVERJAR is running. Stopping server..."
-		as_user "screen -p 0 -S $SERVERNAME -X eval 'stuff \"stop\"\015'"
-		# Wait 10 seconds to finish stopping
-		sleep 10
 		# Print output
-		tail -n $[`wc -l "$MCPATH/logs/latest.log" | awk '{print $1}'`-$pre_log_len] "$MCPATH/logs/latest.log"
-	else
-		echo "$SERVERJAR is not running..."
+		CURRENT_LOG_LENGTH=`wc -l "$LOG_FILE" | awk '{print $1}'`
+		tail -n $((CURRENT_LOG_LENGTH-PRE_LOG_LENGTH)) "$LOG_FILE"
 	fi
 }
 
-mc_command() {
-	command="$1";
-	if [ "$command" == "" ]
+server_stop() {
+	if is_running
 	then
-		echo "Usage: server.sh [ start | stop | restart | status | save | backup | \"command\" ]"
+		echo "$SERVER_NAME is running. Stopping server..."
+		server_command $STOP_COMMAND
+		sleep $STOP_TIME
+		if is_running
+		then
+			echo "$SERVER_NAME is still running."
+		else
+			echo "$SERVER_NAME has stopped."
+		fi
+	else
+		echo "$SERVER_NAME is not running."
+	fi
+}
+
+server_status() {
+	if is_running
+	then
+		echo "$SERVER_NAME is running."
+	else
+		echo "$SERVER_NAME is not running."
+	fi
+}
+
+server_command() {
+	COMMAND=$*
+	if [ -z "$COMMAND" ]
+	then
+		# Show full command usage when for no args when sending server commands by default
+		#echo "Usage: $0 { start | stop | restart | status | save | screen | backup | cmd <command> }"
+		echo "Usage: $0 cmd <command>"
 		return
 	fi
-	if pgrep -u $USERNAME -f $SERVERJAR > /dev/null
+	if is_running
 	then
-		pre_log_len=`wc -l "$MCPATH/logs/latest.log" | awk '{print $1}'`
-		echo "$SERVERJAR is running. Executing $command..."
-		as_user "screen -p 0 -S $SERVERNAME -X eval 'stuff \"$command\"\015'"
-		# Wait 1 second for the command to run and print to the log file
-		sleep 1
+		echo "$SERVER_NAME is running. Executing $COMMAND..."
+		PRE_LOG_LENGTH=`wc -l "$LOG_FILE" | awk '{print $1}'`
+		as_user "screen -p 0 -S $SCREEN_NAME -X eval 'stuff \"$COMMAND\"\015'"
+		sleep $COMMAND_TIME
 		# Print output
-		tail -n $[`wc -l "$MCPATH/logs/latest.log" | awk '{print $1}'`-$pre_log_len] "$MCPATH/logs/latest.log"
+		CURRENT_LOG_LENGTH=`wc -l "$LOG_FILE" | awk '{print $1}'`
+		tail -n $((CURRENT_LOG_LENGTH-PRE_LOG_LENGTH)) "$LOG_FILE"
 	else
-		echo "$SERVERJAR is not running..."
+		echo "$SERVER_NAME is not running."
 	fi
 }
 
-mc_saveall() {
-	if pgrep -u $USERNAME -f $SERVERJAR > /dev/null
-	then
-		echo "$SERVERJAR is running. Saving the world..."
-		# Save the World
-		as_user "screen -p 0 -S $SERVERNAME -X eval 'stuff \"save-all\"\015'"
-		# Say World saved.
-		as_user "screen -p 0 -S $SERVERNAME -X eval 'stuff \"say World saved.\"\015'"
-		# Save WorldGuard Regions
-		as_user "screen -p 0 -S $SERVERNAME -X eval 'stuff \"region save\"\015'"
-		sync
-		# Wait 10 seconds to finish saving
-		sleep 10
-		echo "World saved."
-	else
-		echo "$SERVERJAR was not running. Noting to save."
-	fi
-}
-
-mc_backup() {
-	NOW=`date "+%Y-%m-%d_%Hh%M"`
-
-	# Backup Server World
-	for world in ${!WORLDS[*]}
+server_save() {
+	for CMD in ${!SAVE_COMMANDS[*]}
 	do
-		echo "Backing up world ${WORLDS[$world]}..."
-		as_user "cd $MCPATH && zip -r $BACKUPPATH/${WORLDS[$world]}_${NOW}.zip ${WORLDS[$world]}"
-		echo "${WORLDS[$world]} has been archived."
+		server_command ${SAVE_COMMANDS[$CMD]}
 	done
+}
 
-	# Backup Server Plugins
-	echo "Backing up server plugins..."
-	as_user "cd $MCPATH && zip -r --exclude=plugins/dynmap/web/tiles/* $BACKUPPATH/Plugins_${NOW}.zip plugins"
-	echo "The plugins have been archived."
+server_screen() {
+	if is_running
+	then
+		as_user "screen -p 0 -S $SCREEN_NAME -r"
+	else
+		echo "$SERVER_NAME is not running."
+	fi
+}
 
-	# Backup Server Data (Bans, White-list, etc...)
-	echo "Backing up server data..."
-	as_user "cd $MCPATH && zip $BACKUPPATH/Server_${NOW}.zip *"
-	echo "The server data has been archived."
-
+server_backup() {
+	# Save server
+	server_save
+	# Disable saving
+	for CMD in ${!SAVE_DISABLE_COMMANDS[*]}
+	do
+		server_command ${SAVE_DISABLE_COMMANDS[$CMD]}
+	done
+	# Archive files
+	for FILE in ${!BACKUP[*]}
+	do
+		ARGS=${BACKUP[$FILE]}
+		echo "Backing up $FILE..."
+		as_user "cd $SERVER_DIR && 7za a $BACKUP_DIR/${FILE}_${BACKUP_TIME}.zip $ARGS"
+		echo "$FILE has been archived."
+	done
+	# Re-enable saving
+	for CMD in ${!SAVE_ENABLE_COMMANDS[*]}
+	do
+		server_command ${SAVE_ENABLE_COMMANDS[$CMD]}
+	done
 	echo "Server backup complete."
 }
 
-mc_status() {
-	if pgrep -u $USERNAME -f $SERVERJAR > /dev/null
-	then
-		echo "$SERVERJAR is running."
-	else
-		echo "$SERVERJAR is not running."
-	fi
-}
-
-#Start-Stop here
-case "$1" in
+case $1 in
 	start)
-		mc_start
+		server_start
 	;;
 	stop)
-		mc_stop
+		server_stop
 	;;
 	restart)
-		mc_stop
-		mc_start
-	;;
-	spigot-restart)
-		# Wait 30 seconds for the server to fully stop then start again
-		sleep 30
-		mc_start
-	;;
-	save)
-		mc_saveall
-	;;
-	backup)
-		mc_saveall
-		mc_command "save-off"
-		mc_backup
-		mc_command "save-on"
+		server_stop
+		server_start
 	;;
 	status)
-		mc_status
+		server_status
 	;;
-	votemsg)
-		mc_command $VOTECMD
+	save)
+		server_save
+	;;
+	screen)
+		server_screen
+	;;
+	cmd)
+		server_command ${@:2}
+	;;
+	command)
+		server_command ${@:2}
+	;;
+	spigot-restart)
+		sleep $SPIGOT_RESTART_TIME
+		server_start
+	;;
+	backup)
+		server_backup
 	;;
 	*)
-		mc_command "$*"
+		# Optional: pass command to server by default
+		#server_command $*
+		echo "Usage: $0 { start | stop | restart | status | save | screen | backup | cmd <command> }"
 	;;
 esac
 

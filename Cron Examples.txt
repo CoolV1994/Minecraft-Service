@@ -4,21 +4,21 @@
 # Use command `crontab -e` to open an editor with your cron jobs.
 
 # Start any crashed servers again each hour
-@hourly				minecraft start
+@hourly				minecraft @ start
 
 # Auto save every 30 minutes
-0,30	*	*	*	*	minecraft save
+0,30	*	*	*	*minecraft @ save
 
-# Have you voted today?
-5	*/2	*	*	*	minecraft votemessage
+# Every 2 hours broadcast vote message.
+5	*/2	*	*	*	minecraft s @ cmd broadcast Have you voted today? Use /vote.
 
 # Nightly reboot and backup
-30	23	*	*	*	minecraft say Reboot in 25 minutes...
-45	23	*	*	*	minecraft say Reboot in 10 minutes...
-50	23	*	*	*	minecraft say Reboot in 5 minutes...
-54	23	*	*	*	minecraft say Reboot in 1 minute. Rejoin in 5 minutes.
-55	23	*	*	*	minecraft stop
-56	23	*	*	*	minecraft backup
+30	23	*	*	*	minecraft @ cmd broadcast Reboot in 25 minutes...
+45	23	*	*	*	minecraft @ cmd broadcast Reboot in 10 minutes...
+50	23	*	*	*	minecraft @ cmd broadcast Reboot in 5 minutes...
+54	23	*	*	*	minecraft @ cmd broadcast Reboot in 1 minute. Rejoin in 5 minutes.
+55	23	*	*	*	minecraft @ stop
+56	23	*	*	*	minecraft @ backup
 
 # Weekly backup cleanup
-@weekly				sh /home/minecraft/CleanBackups.sh
+@weekly				/home/minecraft/CleanBackups.sh

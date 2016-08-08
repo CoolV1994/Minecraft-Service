@@ -1,3 +1,3 @@
-#!/bin/bash
+# !/bin/bash
 #
-screen -S Temp -d -m /etc/init.d/minecraft spigot-restart
+screen -d -m ./server.sh spigot-restart

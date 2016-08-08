@@ -1,3 +1,3 @@
 #!/bin/bash
 #
-find /home/gawd/Backups/* -mtime +4 -print -exec rm {} \;
+find /home/minecraft/Backups/* -mtime +4 -print -exec rm {} \;
